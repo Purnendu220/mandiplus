@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.purnendumishra.myapplication">
+
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name="com.example.purnendumishra.BaseActivity" />
+
+
+        <activity android:name=".LoginActivity"
+            android:windowSoftInputMode="adjustPan"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+
+
+        </activity>
+        <activity android:name=".VerificationActivity"
+            android:windowSoftInputMode="adjustPan"
+            ></activity>
+        <activity android:name=".ProfileCreationActivity"
+            android:windowSoftInputMode="adjustPan"
+            ></activity>
+        <activity android:name=".HomeActivity"
+            android:label="HOME">
+
+
+        </activity>
+        <activity android:name=".SelectorActivity"></activity>
+        <activity android:name=".WheelPickerActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.TransparentChoose"
+            ></activity>
+        <receiver android:name=".BinarySMSReceiver" android:exported="true" android:permission="android.permission.BROADCAST_SMS" >
+            <intent-filter android:priority="5822">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
