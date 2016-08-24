@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -46,11 +47,13 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -71,6 +74,11 @@ public class ProfileCreationActivity extends BaseActivity implements View.OnClic
     private String mSubjectIntent="SUBJECT";
     private String[] langlist= new String[200];
     private String[] itemlist= new String[200];
+    private String[] itemlist1= new String[200];
+    private String[] itemlist2= new String[200];
+    private String[] itemlist3= new String[200];
+
+
     private String[]  langlistdefault={"HINDI", "ENGLISH", "GUJRATI","MARATHI","TELGU","KANNAD"};
     private String[]  itemlistdefault={"MANGO", "GRAPS", "BANANA","TOMATO","PUMPKIN","CABAGE","RED CHILLI","CLUSTER BEAN"};
     private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
@@ -82,7 +90,13 @@ public class ProfileCreationActivity extends BaseActivity implements View.OnClic
     StringBuilder selectedhoteltype=new StringBuilder();
     final ArrayList<Integer>    mSelectedItems = new ArrayList<Integer>();
     final ArrayList<String>    mSelectedItemsString= new ArrayList<String>();
+    final ArrayList<String>    mSelectedItemsString1= new ArrayList<String>();
+    final ArrayList<String>    mSelectedItemsString2= new ArrayList<String>();
+
+
     boolean[] citem ={false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false};
+   String english="",hindi="",gujrati="";
+
     @Override
     public int getContentViewID() {
         return R.layout.activity_profile_creation;
@@ -158,6 +172,15 @@ public class ProfileCreationActivity extends BaseActivity implements View.OnClic
                     i.putExtras(b);
                     startActivityForResult(i, REQUEST_CODE_SELECT_SUBJECT);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down);*/
+                    if(editTextLanguage.getText().toString().equalsIgnoreCase("english")){
+                        english=editTextIntrest.getText().toString();
+                    }
+                    else if(editTextLanguage.getText().toString().equalsIgnoreCase("hindi")){
+                        hindi=editTextIntrest.getText().toString();
+                    }
+                    else if(editTextLanguage.getText().toString().equalsIgnoreCase("gujarati")){
+                        gujrati=editTextIntrest.getText().toString();
+                    }
                     showDialog(1);
                 }
                 else {
@@ -176,7 +199,16 @@ public class ProfileCreationActivity extends BaseActivity implements View.OnClic
                     startActivityForResult(i1, REQUEST_CODE_SELECT_ITEM);
                     overridePendingTransition(R.anim.slide_in_up, R.anim.slide_out_down);*/
                    // alertMultipleChoiceItems();
-                    showMultiChoiceDialogWithSearchFilterUI(ProfileCreationActivity.this,itemlist,R.string.app_name,null);
+                    if(editTextLanguage.getText().toString().equalsIgnoreCase("english")){
+                        showMultiChoiceDialogWithSearchFilterUI(ProfileCreationActivity.this,itemlist,R.string.app_name,null);
+                    }
+                    else if(editTextLanguage.getText().toString().equalsIgnoreCase("hindi")){
+                        showMultiChoiceDialogWithSearchFilterUI1(ProfileCreationActivity.this,itemlist,R.string.app_name,null);
+                    }
+                    else if(editTextLanguage.getText().toString().equalsIgnoreCase("gujarati")){
+                        showMultiChoiceDialogWithSearchFilterUI2(ProfileCreationActivity.this,itemlist,R.string.app_name,null);
+
+                    }
                 }
                 else{
                     AlertUtils.showToastLong(mContext,"No intrest area found for you.");
@@ -294,25 +326,49 @@ public class ProfileCreationActivity extends BaseActivity implements View.OnClic
             List<Address> retList = null;
 
 
-            JSONArray jsonarray = new JSONArray(sb.toString());
-            if(jsonarray.length()>0){
-                JSONObject object=jsonarray.getJSONObject(0);
-                selectedlag=object.getString("selected_language");
+          //  JSONArray jsonarray = new JSONArray(sb.toString());
+           // if(jsonarray.length()>0){
+                JSONObject object= new JSONObject(sb.toString());// jsonarray.getJSONObject(0);
+                //selectedlag=object.getString("selected_language");
+            selectedlag= base64Decode(object.getString("selected_language"));
                 JSONArray arr=object.getJSONArray("rest_langyage_List");
-                JSONArray arr1=object.getJSONArray("itemList");
+                JSONArray arr1=object.getJSONArray("itemList_english");
+                JSONArray arr2=object.getJSONArray("itemList_hindi");
+                JSONArray arr3=object.getJSONArray("itemList_gujarati");
+
+
+
                 if(arr!=null&&arr.length()>0){
+
                     langlist=getStringArray(arr);
+                    langlist[2]=selectedlag;
                 }
                 else{
                     langlist=langlistdefault;
                 }
               if (arr1!=null&&arr1.length()>0){
-                itemlist=getStringArray(arr1);
+                itemlist1=getStringArray(arr1);
+                  itemlist2=getStringArray(arr2);
+                  itemlist3=getStringArray(arr3);
+                  if(selectedlag.equalsIgnoreCase("english")){
+                      itemlist=itemlist1;
+                  }
+                  else if(selectedlag.equalsIgnoreCase("hindi")){
+                      itemlist=itemlist2;
+                  }
+                  else if(selectedlag.equalsIgnoreCase("gujarati")){
+                      itemlist=itemlist3;
+                  }
+                  else{
+                      itemlist=itemlist1;
+                  }
               }
                 else{
 
                   itemlist=itemlistdefault;
               }
+
+
                 LogUtils.debug("Detail " + object.toString()+":"+selectedlag+":"+":"+getStringArray(arr)[0]);
      runOnUiThread(new Runnable() {
          @Override
@@ -320,7 +376,7 @@ public class ProfileCreationActivity extends BaseActivity implements View.OnClic
              editTextLanguage.setText(selectedlag);
          }
      });
-            }
+     //       }
 
 
         }
@@ -444,7 +500,7 @@ String address= "";
         if(jsonArray!=null){
             stringArray = new String[length];
             for(int i=0;i<length;i++){
-                stringArray[i]= jsonArray.getString(i);
+                stringArray[i]= base64Decode(jsonArray.getString(i));
 
             }
         }
@@ -495,20 +551,21 @@ String address= "";
         protected void onPostExecute(String strings) {
             super.onPostExecute(strings);
             LogUtils.debug("String " + strings);
-if (!StringUtils.isEmpty(strings)&&strings.contains("successfully register")){
+if (!StringUtils.isEmpty(strings)&&strings.contains("9")){
     try {
         JSONObject predictions = new JSONObject(strings);
         LogUtils.debug(predictions.getString("calling_num"));
         AppSharedPreferences.getInstance(mContext).setPrefrence(AppMessages.Constants.CALL_MOBILE,predictions.getString("calling_num"));
+        AppSharedPreferences.getInstance(mContext).setPrefrence(AppMessages.Constants.MSG,predictions.getString("message"));
         activityCleanSwitcher(HomeActivity.class);
     } catch (JSONException e) {
         e.printStackTrace();
     }
 }
             else{
-    AppSharedPreferences.getInstance(mContext).setPrefrence(AppMessages.Constants.CALL_MOBILE,"9911024648");
-    activityCleanSwitcher(HomeActivity.class);
-  // AlertUtils.showToastLong(mContext,"Failed to Register please try after sometime.Server may be busy.");
+   // AppSharedPreferences.getInstance(mContext).setPrefrence(AppMessages.Constants.CALL_MOBILE,"9911024648");
+    //activityCleanSwitcher(HomeActivity.class);
+   AlertUtils.showToastLong(mContext,"Failed to Register please try after sometime.Server may be busy.");
 }
             progressDialogDismiss();
 
@@ -525,7 +582,8 @@ if (!StringUtils.isEmpty(strings)&&strings.contains("successfully register")){
         String fulladdress = null;
         try {
             String address = String
-                    .format("http://ec2-52-66-129-148.ap-south-1.compute.amazonaws.com:8080/app_service/user_register/"+mobile+"/"+URLEncoder.encode(state, "utf8")+"/"+lag+"/"+item+"/"+otp+"/"+deviceutil);
+                    .format("http://ec2-52-66-129-148.ap-south-1.compute.amazonaws.com:8080/app_service/user_register/"+mobile+"/"+URLEncoder.encode(state, "utf8")+"/"+lag.toUpperCase()+"/"+base64Encode(item)+"/"+otp+"/"+deviceutil);
+           Log.e("TAD",address);
             URL googlePlaces;
             googlePlaces = new URL(address);
             URLConnection tc = googlePlaces.openConnection();
@@ -662,6 +720,21 @@ fulladdress =sb.toString();
             public void onClick(DialogInterface dialog, int which) {
                 if (type.equalsIgnoreCase("1")){
                     editTextLanguage.setText(list[which]);
+                    if(list[which].equalsIgnoreCase("english")){
+                        editTextIntrest.setText(english);
+                        itemlist= new String[200];
+                        itemlist=itemlist1;
+                    }
+                    else if(list[which].equalsIgnoreCase("hindi")){
+                        itemlist= new String[200];
+                        itemlist=itemlist2;
+                        editTextIntrest.setText(hindi);
+                    }
+                    else if(list[which].equalsIgnoreCase("gujarati")){
+                        itemlist= new String[200];
+                        itemlist=itemlist3;
+                        editTextIntrest.setText(gujrati);
+                    }
                 }
                 if (type.equalsIgnoreCase("2")){
 
@@ -1005,4 +1078,424 @@ fulladdress =sb.toString();
         });
         dialog.show();
     }
+    public  void showMultiChoiceDialogWithSearchFilterUI1(final Activity _activity, final String[] _optionsList,
+                                                         final int _titleResId, final View.OnClickListener _itemSelectionListener) {
+
+        final ArrayList<String> mSelectedItemsStringLocal= new ArrayList<String>();
+
+        final ListView listView = new ListView(_activity);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(_activity);
+
+        final List<ListItemWithIndex> allItems = new ArrayList<ListItemWithIndex>();
+        final List<ListItemWithIndex> filteredItems = new ArrayList<ListItemWithIndex>();
+
+        for (int i = 0; i < _optionsList.length; i++) {
+            final Object obj = _optionsList[i];
+            final ListItemWithIndex listItemWithIndex = new ListItemWithIndex(i, obj.toString());
+            allItems.add(listItemWithIndex);
+            filteredItems.add(listItemWithIndex);
+        }
+
+        dialogBuilder.setTitle("Please select fruits and vegetables that you want to trade.");
+        dialogBuilder.setCancelable(false);
+        final ArrayAdapter<ListItemWithIndex> objectsAdapter = new ArrayAdapter<ListItemWithIndex>(_activity,
+                android.R.layout.simple_list_item_multiple_choice, filteredItems) {
+            @Override
+            public Filter getFilter() {
+                return new Filter() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    protected void publishResults(final CharSequence constraint, final FilterResults results) {
+                        filteredItems.clear();
+                        filteredItems.addAll((List<ListItemWithIndex>) results.values);
+                        notifyDataSetChanged();
+
+                        for(int i = 0;i<filteredItems.size();i++){
+                            listView.setItemChecked( i, citem[i]);
+                            for (int j=0;j<mSelectedItemsString1.size();j++){
+                                if (mSelectedItemsString1.get(j).equalsIgnoreCase(filteredItems.get(i).value)){
+                                    listView.setItemChecked( i, true);
+                                }
+
+                            }
+                        }
+
+/*
+                        for (int i=0;i<filteredItems.size();i++){
+                            for (int j=0;j<mSelectedItemsString.size();j++){
+                                if (mSelectedItemsString.get(j).equalsIgnoreCase(filteredItems.get(i).value)){
+                                    listView.setItemChecked( i, true);
+                                } else{
+                                }
+
+                            }
+                        }*/
+                    }
+
+                    @Override
+                    protected FilterResults performFiltering(final CharSequence constraint) {
+                        final FilterResults results = new FilterResults();
+
+                        final String filterString = constraint.toString();
+                        final ArrayList<ListItemWithIndex> list = new ArrayList<ListItemWithIndex>();
+                        for (final ListItemWithIndex obj : allItems) {
+                            final String objStr = obj.toString();
+                            if ("".equals(filterString)
+                                    || objStr.toLowerCase(Locale.getDefault()).contains(
+                                    filterString.toLowerCase(Locale.getDefault()))) {
+                                list.add(obj);
+
+                            }
+                            Log.e("TAG","list"+allItems.get(0));
+                        }
+
+                        results.values = list;
+                        results.count = list.size();
+                        return results;
+                    }
+                };
+            }
+        };
+
+        final EditText searchEditText = new EditText(_activity);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(final CharSequence arg0, final int arg1, final int arg2, final int arg3) {
+            }
+
+            @Override
+            public void beforeTextChanged(final CharSequence arg0, final int arg1, final int arg2, final int arg3) {
+            }
+
+            @Override
+            public void afterTextChanged(final Editable arg0) {
+                objectsAdapter.getFilter().filter(searchEditText.getText());
+            }
+        });
+
+
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+
+        final Button cancel=new Button(_activity);
+        final Button Ok=new Button(_activity);
+        cancel.setText("Cancel");
+        Ok.setText("Ok");
+        cancel.setBackgroundColor(Color.TRANSPARENT);
+        Ok.setBackgroundColor(Color.TRANSPARENT);
+        cancel.setTextColor(getResources().getColor(R.color.app_green));
+        Ok.setTextColor(getResources().getColor(R.color.app_green));
+        listView.setAdapter(objectsAdapter);
+        for(int i = 0;i<filteredItems.size();i++){
+            listView.setItemChecked( i, citem[i]);
+            for (int j=0;j<mSelectedItemsString1.size();j++){
+                if (mSelectedItemsString1.get(j).equalsIgnoreCase(filteredItems.get(i).value)){
+                    listView.setItemChecked( i, true);
+                }
+
+            }
+        }
+        final LinearLayout linearLayout = new LinearLayout(_activity);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        linearLayout.addView(searchEditText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0);
+        layoutParams.weight = 1;
+        linearLayout.addView(listView, layoutParams);
+        final LinearLayout linearLayout1 = new LinearLayout(_activity);
+        linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+        final LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams1.gravity = Gravity.RIGHT;
+        linearLayout1.addView(cancel, layoutParams1);
+        linearLayout1.addView(Ok, layoutParams1);
+        linearLayout.addView(linearLayout1, layoutParams1);
+
+
+        dialogBuilder.setView(linearLayout);
+
+        final AlertDialog dialog = dialogBuilder.create();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+                //dialog.dismiss();
+                /// _itemSelectionListener.onClick(null, filteredItems.get(position).index);
+                Log.e("TAG","list"+filteredItems.get(position).index);
+                for (int i=0;i<mSelectedItemsString1.size();i++){
+                    if (mSelectedItemsString1.get(i).equalsIgnoreCase(filteredItems.get(position).value)){
+                        mSelectedItemsString1.remove(filteredItems.get(position).value);
+                        mSelectedItemsStringLocal.remove(filteredItems.get(position).value);
+
+                        return;
+                    }
+
+                }
+                mSelectedItemsString1.add(filteredItems.get(position).value);
+                mSelectedItemsStringLocal.add(filteredItems.get(position).value);
+
+                Log.e("TAG","list"+filteredItems.get(position).index);
+            }
+        });
+        Ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                selectedhoteltype=new StringBuilder();
+                if(mSelectedItemsString1.size()>5){
+                    showalert();
+                    return;
+                }
+                for (int i=0;i<mSelectedItemsString1.size();i++){
+                    selectedhoteltype.append(mSelectedItemsString1.get(i)+",");
+                }
+                editTextIntrest.setText(selectedhoteltype.toString());
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                // selectedhoteltype=new StringBuilder();
+                for (int i=0;i<mSelectedItemsStringLocal.size();i++){
+
+                    for (int j=0;j<mSelectedItemsString1.size();j++){
+                        if(mSelectedItemsStringLocal.get(i).equalsIgnoreCase(mSelectedItemsString1.get(j))){
+                            mSelectedItemsString1.remove(mSelectedItemsString1.get(j));
+
+                        }
+
+
+                    }
+
+
+                }
+                // editTextIntrest.setText(selectedhoteltype.toString());
+            }
+        });
+        dialog.show();
+    }
+    public  void showMultiChoiceDialogWithSearchFilterUI2(final Activity _activity, final String[] _optionsList,
+                                                          final int _titleResId, final View.OnClickListener _itemSelectionListener) {
+
+        final ArrayList<String> mSelectedItemsStringLocal= new ArrayList<String>();
+
+        final ListView listView = new ListView(_activity);
+        final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(_activity);
+
+        final List<ListItemWithIndex> allItems = new ArrayList<ListItemWithIndex>();
+        final List<ListItemWithIndex> filteredItems = new ArrayList<ListItemWithIndex>();
+
+        for (int i = 0; i < _optionsList.length; i++) {
+            final Object obj = _optionsList[i];
+            final ListItemWithIndex listItemWithIndex = new ListItemWithIndex(i, obj.toString());
+            allItems.add(listItemWithIndex);
+            filteredItems.add(listItemWithIndex);
+        }
+
+        dialogBuilder.setTitle("Please select fruits and vegetables that you want to trade.");
+        dialogBuilder.setCancelable(false);
+        final ArrayAdapter<ListItemWithIndex> objectsAdapter = new ArrayAdapter<ListItemWithIndex>(_activity,
+                android.R.layout.simple_list_item_multiple_choice, filteredItems) {
+            @Override
+            public Filter getFilter() {
+                return new Filter() {
+                    @SuppressWarnings("unchecked")
+                    @Override
+                    protected void publishResults(final CharSequence constraint, final FilterResults results) {
+                        filteredItems.clear();
+                        filteredItems.addAll((List<ListItemWithIndex>) results.values);
+                        notifyDataSetChanged();
+
+                        for(int i = 0;i<filteredItems.size();i++){
+                            listView.setItemChecked( i, citem[i]);
+                            for (int j=0;j<mSelectedItemsString2.size();j++){
+                                if (mSelectedItemsString2.get(j).equalsIgnoreCase(filteredItems.get(i).value)){
+                                    listView.setItemChecked( i, true);
+                                }
+
+                            }
+                        }
+
+/*
+                        for (int i=0;i<filteredItems.size();i++){
+                            for (int j=0;j<mSelectedItemsString2.size();j++){
+                                if (mSelectedItemsString2.get(j).equalsIgnoreCase(filteredItems.get(i).value)){
+                                    listView.setItemChecked( i, true);
+                                } else{
+                                }
+
+                            }
+                        }*/
+                    }
+
+                    @Override
+                    protected FilterResults performFiltering(final CharSequence constraint) {
+                        final FilterResults results = new FilterResults();
+
+                        final String filterString = constraint.toString();
+                        final ArrayList<ListItemWithIndex> list = new ArrayList<ListItemWithIndex>();
+                        for (final ListItemWithIndex obj : allItems) {
+                            final String objStr = obj.toString();
+                            if ("".equals(filterString)
+                                    || objStr.toLowerCase(Locale.getDefault()).contains(
+                                    filterString.toLowerCase(Locale.getDefault()))) {
+                                list.add(obj);
+
+                            }
+                            Log.e("TAG","list"+allItems.get(0));
+                        }
+
+                        results.values = list;
+                        results.count = list.size();
+                        return results;
+                    }
+                };
+            }
+        };
+
+        final EditText searchEditText = new EditText(_activity);
+        searchEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(final CharSequence arg0, final int arg1, final int arg2, final int arg3) {
+            }
+
+            @Override
+            public void beforeTextChanged(final CharSequence arg0, final int arg1, final int arg2, final int arg3) {
+            }
+
+            @Override
+            public void afterTextChanged(final Editable arg0) {
+                objectsAdapter.getFilter().filter(searchEditText.getText());
+            }
+        });
+
+
+        listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
+
+        final Button cancel=new Button(_activity);
+        final Button Ok=new Button(_activity);
+        cancel.setText("Cancel");
+        Ok.setText("Ok");
+        cancel.setBackgroundColor(Color.TRANSPARENT);
+        Ok.setBackgroundColor(Color.TRANSPARENT);
+        cancel.setTextColor(getResources().getColor(R.color.app_green));
+        Ok.setTextColor(getResources().getColor(R.color.app_green));
+        listView.setAdapter(objectsAdapter);
+        for(int i = 0;i<filteredItems.size();i++){
+            listView.setItemChecked( i, citem[i]);
+            for (int j=0;j<mSelectedItemsString2.size();j++){
+                if (mSelectedItemsString2.get(j).equalsIgnoreCase(filteredItems.get(i).value)){
+                    listView.setItemChecked( i, true);
+                }
+
+            }
+        }
+        final LinearLayout linearLayout = new LinearLayout(_activity);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        linearLayout.addView(searchEditText, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));
+        final LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, 0);
+        layoutParams.weight = 1;
+        linearLayout.addView(listView, layoutParams);
+        final LinearLayout linearLayout1 = new LinearLayout(_activity);
+        linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+        final LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        layoutParams1.gravity = Gravity.RIGHT;
+        linearLayout1.addView(cancel, layoutParams1);
+        linearLayout1.addView(Ok, layoutParams1);
+        linearLayout.addView(linearLayout1, layoutParams1);
+
+
+        dialogBuilder.setView(linearLayout);
+
+        final AlertDialog dialog = dialogBuilder.create();
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
+                //dialog.dismiss();
+                /// _itemSelectionListener.onClick(null, filteredItems.get(position).index);
+                Log.e("TAG","list"+filteredItems.get(position).index);
+                for (int i=0;i<mSelectedItemsString2.size();i++){
+                    if (mSelectedItemsString2.get(i).equalsIgnoreCase(filteredItems.get(position).value)){
+                        mSelectedItemsString2.remove(filteredItems.get(position).value);
+                        mSelectedItemsStringLocal.remove(filteredItems.get(position).value);
+
+                        return;
+                    }
+
+                }
+                mSelectedItemsString2.add(filteredItems.get(position).value);
+                mSelectedItemsStringLocal.add(filteredItems.get(position).value);
+
+                Log.e("TAG","list"+filteredItems.get(position).index);
+            }
+        });
+        Ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                selectedhoteltype=new StringBuilder();
+                if(mSelectedItemsString2.size()>5){
+                    showalert();
+                    return;
+                }
+                for (int i=0;i<mSelectedItemsString2.size();i++){
+                    selectedhoteltype.append(mSelectedItemsString2.get(i)+",");
+                }
+                editTextIntrest.setText(selectedhoteltype.toString());
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+                // selectedhoteltype=new StringBuilder();
+                for (int i=0;i<mSelectedItemsStringLocal.size();i++){
+
+                    for (int j=0;j<mSelectedItemsString2.size();j++){
+                        if(mSelectedItemsStringLocal.get(i).equalsIgnoreCase(mSelectedItemsString2.get(j))){
+                            mSelectedItemsString2.remove(mSelectedItemsString2.get(j));
+
+                        }
+
+
+                    }
+
+
+                }
+                // editTextIntrest.setText(selectedhoteltype.toString());
+            }
+        });
+        dialog.show();
+    }
+
+    public  String base64Decode(String token) {
+        String text="";
+        byte[] data = Base64.decode(token, Base64.DEFAULT);
+
+        try {
+             text = new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return text;
+    }
+
+    public  String base64Encode(String token) {
+        byte[] data=null;
+        try{
+      data = token.getBytes("UTF-8");
+        }
+        catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+
+        return base64.replaceAll("\\s+","");
+    }
+
 }

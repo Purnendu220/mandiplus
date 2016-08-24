@@ -2,9 +2,11 @@ package com.example.purnendumishra.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +19,10 @@ import com.example.purnendumishra.handler.AppMessages;
 import com.example.purnendumishra.handler.AppSharedPreferences;
 import com.example.purnendumishra.handler.LogUtils;
 
+import java.io.UnsupportedEncodingException;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
     private RefrenceWrapper refrenceWrapper;
@@ -25,6 +31,7 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
     private Context mContext;
     private TextView text_title;
     private ImageView cart,profile;
+    CircleImageView imgcall;
     @Override
     public int getContentViewID() {
         return R.layout.activity_home;
@@ -48,6 +55,11 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         view_ActiveBid=(View)findViewById(R.id.view_ActiveBid);
         view_SoldBid=(View)findViewById(R.id.view_SoldBid);
         view_BoughtBid=(View)findViewById(R.id.view_BoughtBid);
+        TextView textView5=(TextView)findViewById(R.id.textView5);
+        Typeface hindiFont = Typeface.createFromAsset(getAssets(), "fonts/gargi.ttf");
+        textView5.setText(base64Decode(AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.MSG)));
+        //textView5.setTypeface(hindiFont);
+         imgcall=(CircleImageView)findViewById(R.id.view);
 
 
     }
@@ -57,12 +69,13 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         login_btnActiveBid.setOnClickListener(this);
         login_btnSoldBid.setOnClickListener(this);
         login_btnBoughtBid.setOnClickListener(this);
+        imgcall.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.buttonCall:
+            case R.id.view:
                 LogUtils.debug(AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.CALL_MOBILE));
                 Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.CALL_MOBILE)));
                 startActivity(intent);
@@ -98,5 +111,15 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
         }
     }
+    public  String base64Decode(String token) {
+        String text="";
+        byte[] data = Base64.decode(token, Base64.DEFAULT);
 
+        try {
+            text = new String(data, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return text;
+    }
 }

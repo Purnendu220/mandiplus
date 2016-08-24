@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/badge_color1"
 
     tools:context="com.example.purnendumishra.myapplication.HomeActivity">
 
@@ -33,7 +34,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:padding="7dp"
-                android:text="Bidding"
+                android:text="WELCOME"
                 android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textStyle="bold"
@@ -72,6 +73,7 @@
         android:layout_below="@+id/layout_top"
         android:orientation="horizontal"
         android:weightSum="3"
+        android:visibility="gone"
         android:background="@color/separater_gry_light1"
         >
 
@@ -184,6 +186,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:weightSum="4"
+        android:visibility="gone"
         android:background="@color/separater_gry_light1"
         >
 
@@ -299,12 +302,37 @@
         </LinearLayout>
     </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No items to view come back later."
-        android:id="@+id/textView5"
-        android:textColor="@color/black"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Please contact,\nto trade with us."
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:id="@+id/textView5"
+            android:textColor="@color/white"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:id="@+id/view"
+            android:layout_below="@+id/textView5"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/call"
+            android:layout_marginTop="20dp"
+            />
+
+
+    </LinearLayout>
 </RelativeLayout>

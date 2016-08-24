@@ -47,6 +47,7 @@ public interface Constants{
     String OTP="otp";
     String MOBILE="mobile";
     String CALL_MOBILE="call_mobile";
+    String MSG="msg";
 
 
 }
