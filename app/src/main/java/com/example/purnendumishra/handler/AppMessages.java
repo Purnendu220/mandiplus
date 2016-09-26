@@ -48,7 +48,7 @@ public interface Constants{
     String MOBILE="mobile";
     String CALL_MOBILE="call_mobile";
     String MSG="msg";
-
+String LANG="lang";
 
 }
 

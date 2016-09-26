@@ -45,6 +45,17 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
 
         InitUi();
         setlistener();
+        if(AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.LANG).equalsIgnoreCase("english")){
+            text_title.setText("WELCOME");
+
+        }
+        if(AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.LANG).equalsIgnoreCase("hindi")){
+text_title.setText("स्वागत हे");
+        }
+        if(AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.LANG).equalsIgnoreCase("gujarati")){
+            text_title.setText("આપનું સ્વાગત છે");
+        }
+
     }
     private void InitUi(){
         mCall=(Button)findViewById(R.id.buttonCall);
@@ -56,6 +67,8 @@ public class HomeActivity extends BaseActivity implements View.OnClickListener {
         view_SoldBid=(View)findViewById(R.id.view_SoldBid);
         view_BoughtBid=(View)findViewById(R.id.view_BoughtBid);
         TextView textView5=(TextView)findViewById(R.id.textView5);
+         text_title=(TextView)findViewById(R.id.text_title);
+
         Typeface hindiFont = Typeface.createFromAsset(getAssets(), "fonts/gargi.ttf");
         textView5.setText(base64Decode(AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.MSG)));
         //textView5.setTypeface(hindiFont);

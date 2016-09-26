@@ -35,7 +35,6 @@
                 android:layout_gravity="center"
                 android:padding="7dp"
                 android:text="WELCOME"
-                android:textAllCaps="true"
                 android:textColor="@color/white"
                 android:textStyle="bold"
                 android:textSize="24sp" />
@@ -329,7 +328,7 @@
             android:id="@+id/view"
             android:layout_below="@+id/textView5"
             android:layout_centerHorizontal="true"
-            android:src="@drawable/call"
+            android:src="@drawable/phone"
             android:layout_marginTop="20dp"
             />
 

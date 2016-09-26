@@ -2,6 +2,12 @@
 <resources>
 
     <string name="app_name">MandiPlus</string>
+    <string name="app_name_hi">मंडीप्लस</string>
+    <string name="app_name_gu">સ્નાનવત્તા</string>
+    <string name="register_g">નોંધણી</string>
+    <string name="register_h">रजिस्टर</string>
+    <string name="message_alert_g"></string>
+    <string name="message_g"></string>
     <string name="action_settings">Settings</string>
 
     <string name="welcome">Welcome!</string>
@@ -12,5 +18,8 @@
     <string name="message_login">We need to verify your mobile number.We will send a PIN to the mobile number you enter below.</string>
     <string name="sit_relax_message">Sit back and Relax!While we verify your\n mobile number.</string>
     <string name="enter_otp">(Enter the OTP below in case if we fail to detect the \n SMS automatically)</string>
-
+    <string name="otp_msg">Your Verification code for MandiPlus is </string>
+    <string name="address_hint_hi">आपका पता</string>
+    <string name="address_hint_gu">તમારું સરનામું</string>
+    <string name="address_hint">Your Address</string>
 </resources>

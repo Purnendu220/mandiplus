@@ -61,7 +61,7 @@ private void InitUi(){
     class GetSms extends AsyncTask<String, Void, String> {
 
 
-
+String msg;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -70,6 +70,7 @@ private void InitUi(){
            gps.getLatitude();
            gps.getLongitude();
             otp = random(4);
+            msg=getResources().getString(R.string.otp_msg)+otp;
 
 
         }
@@ -78,7 +79,7 @@ private void InitUi(){
         protected String doInBackground(String... params) {
             String address= "";
             try {
-                address= sendsms(otp);
+                address= sendsms(msg);
 
             }  catch (Exception e) {
                 e.printStackTrace();
@@ -113,7 +114,7 @@ private void InitUi(){
         mContext=getApplicationContext();
         InitUi();
         setlistener();
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+      /*  LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             if (DeviceUtils.isNetworkAvailable(mContext)) {
                 if (AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.CALL_MOBILE).length() > 0) {
@@ -125,7 +126,7 @@ else{
             }
         }else{
             showGPSDisabledAlertToUser();
-        }
+        }*/
 
 
 
@@ -155,8 +156,7 @@ else{
         String smssu = otp;
         String fulladdress = null;
         try {
-            String address = String
-                    .format("http://smssigma.com/API/WebSMS/Http/v1.0a/index.php?username=mandiplus&password=mandiplu&sender=ACCEPT&to="+mobilenumber.getText().toString()+"&message="+otp+"&reqid=1&format={text}&route_id=7");
+            String address = String.format("http://smssigma.com/API/WebSMS/Http/v1.0a/index.php?username=mandiplus&password=mandiplu&sender=ACCEPT&to="+mobilenumber.getText().toString()+"&message="+URLEncoder.encode(otp, "UTF-8")+"&reqid=1&format={text}&route_id=7");
             URL googlePlaces;
             googlePlaces = new URL(address);
             URLConnection tc = googlePlaces.openConnection();
@@ -294,7 +294,7 @@ String mobile;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
                 .setCancelable(false)
-                .setPositiveButton("Goto Settings Page To Enable GPS",
+                .setPositiveButton("Enable GPS",
                         new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface dialog, int id){
                                 Intent callGPSSettingIntent = new Intent(
@@ -316,7 +316,7 @@ String mobile;
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder.setMessage("Internet is disabled in your device. Would you like to enable it?")
                 .setCancelable(false)
-                .setPositiveButton("Goto Settings Page To Enable Internet",
+                .setPositiveButton("Enable Internet",
                         new DialogInterface.OnClickListener(){
                             public void onClick(DialogInterface dialog, int id){
                                 Intent callGPSSettingIntent = new Intent(
@@ -354,5 +354,23 @@ String mobile;
                 });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            if (DeviceUtils.isNetworkAvailable(mContext)) {
+                if (AppSharedPreferences.getInstance(mContext).getPrefrence(AppMessages.Constants.CALL_MOBILE).length() > 0) {
+                    activityCleanSwitcher(HomeActivity.class);
+                }
+            }
+            else{
+                showetDisabledAlertToUser();
+            }
+        }else{
+            showGPSDisabledAlertToUser();
+        }
     }
 }

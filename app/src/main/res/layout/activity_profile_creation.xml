@@ -72,7 +72,7 @@
             android:id="@+id/editTextIntrest"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:hint="Select Area of Intrest"
+            android:hint="Please select fruits and vegetables that you want to trade."
             android:focusable="false"
             android:background="@drawable/bg_rounded"
             android:drawableRight="@drawable/drop1"
